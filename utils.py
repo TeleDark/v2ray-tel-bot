@@ -44,11 +44,17 @@ def check_down(user_index, data):
 
 # checking the total amount of traffic
 def check_total(user_index, data):
-    return check_mb_or_gb(data[user_index]['total'])
+    total = data[user_index]['total']
+    if total == 0:
+        return '♾'
+    return check_mb_or_gb(total)
 
 # checking the expiry Time
 def check_expiryTime(user_index, data):
     time_stamp = data[user_index]['expiryTime']
+    if time_stamp == 0:
+        return 'زمان ♾'
+    
     s = time_stamp / 1000.0
 
     timestamp_to_strtime = datetime.fromtimestamp(
