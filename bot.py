@@ -26,7 +26,7 @@ WHAT_APP = {
 
     "V2rayNG": {
         "name": "V2rayNG",
-        "image_path": os.path.join(real_dir,"mages/v2rayng.jpg")
+        "image_path": os.path.join(real_dir,"images/v2rayng.jpg")
     },
 
     "OneClick": {
