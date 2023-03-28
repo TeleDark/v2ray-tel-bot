@@ -53,10 +53,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     uuid = update.message.text
     if 'not found' in account_info(uuid):
-        await update.message.reply_text("""اکانت شما پیدا نشد!
-مطمئنید که uuid رو درست کپی کردین؟
-اگ نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید
-نسبت به اینکه چه نرم افزاری نصب دارین به شما کمک میکنم""")
+        await update.message.reply_text("""⭕️اکانت شما پیدا نشد!
+✅در صورتی که مطمعن هستید درست وارد کردید ولی اکانتتون پیدا نشده اکانت شما به پایان رسیده و از سرور پاک شده.
+⛔️اگر نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید""")
         return None
     
     up,down,total,expire_time = account_info(uuid)
@@ -69,7 +68,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         [InlineKeyboardButton(f"{expire_time}",callback_data='1')],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text('اطلاعات حساب شما تا این لحظه',reply_markup=reply_markup)
+    await update.message.reply_text('💠اطلاعات سرویس شما تا این لحظه💠', reply_markup=reply_markup)
 
 
 
