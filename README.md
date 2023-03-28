@@ -1,7 +1,4 @@
-# **v2ray-tel-bot**
-
-## Features
-- Getting V2Ray account information through a Telegram bot.
+## V2Ray Telegram bot: **Getting V2Ray account information through a Telegram bot.**
 
 ## How to install
 1. Install Git, Python 3, and Pip 3 on your system. Run `apt install git python3 python3-pip` to install dependencies.
