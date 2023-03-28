@@ -1,6 +1,6 @@
 import requests
 import json
-
+from keys import *
 
 url_login = "login"
 url_lists = "xui/inbound/list"
@@ -21,8 +21,6 @@ servers = [
 
 ]
 
-
-json_file = "accounts_info.json"
 
 # write data in json file
 def write_json(json_data):

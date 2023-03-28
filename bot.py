@@ -1,4 +1,4 @@
-import keys
+from keys import *
 from utils import account_info
 
 from telegram import (
@@ -21,23 +21,24 @@ from telegram.ext import (
 WHAT_APP = {
     "Nekoray": {
         "name": "Nekoray",
-        "image_path": "./images/nekoray.jpg"
+        "image_path": os.path.join(real_dir,"images/nekoray.jpg")
     },
 
     "V2rayNG": {
         "name": "V2rayNG",
-        "image_path": "./images/v2rayng.jpg"
+        "image_path": os.path.join(real_dir,"mages/v2rayng.jpg")
     },
 
     "OneClick": {
         "name": "OneClick",
-        "image_path": "./images/oneclick.jpg"
+        "image_path": os.path.join(real_dir,"images/oneclick.jpg")
     },
 
     "NamsternetV": {
         "name": "NamsternetV",
-        "image_path": "./images/napsternetv.jpg",
+        "image_path": os.path.join(real_dir,"images/napsternetv.jpg")
     },
+
 }
 
 
@@ -102,7 +103,7 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(keys.token).build()
+    application = Application.builder().token(token).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_handler))
 

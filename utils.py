@@ -1,10 +1,8 @@
 import re
 import json
+from keys import *
 from datetime import datetime
 from persiantools.jdatetime import JalaliDateTime
-
-#json file
-json_file = "accounts_info.json"
 
 # convert 1 Gigabytes to Bytes
 mb_or_gb = 1073741824
