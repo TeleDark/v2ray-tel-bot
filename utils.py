@@ -13,9 +13,6 @@ mb_or_gb = 1073741824
 def read_json():
     with open(json_file) as f:
         return json.load(f)
-    
-data = read_json()
-
 
 # convert traffic consumed to gigabytes 
 def gb(traffic_usage):
@@ -68,6 +65,7 @@ def check_expiryTime(user_index, data):
 
 # get account info based on uuid
 def account_info(uuid):
+    data = read_json()
     try:
         settings_data = str([data[i]['settings'] for i in range(len(data))])
         user_index = re.findall(".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(uuid)
