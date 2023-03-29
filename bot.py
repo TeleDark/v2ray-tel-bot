@@ -5,6 +5,7 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    BotCommand,
 
 )
 from telegram.ext import (
@@ -15,6 +16,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     filters,
 )
+from telegram.constants import ParseMode
 
 
 
@@ -52,12 +54,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    # check if message is edited
+    if update.edited_message is not None:
+        return
+        
     uuid = update.message.text
     if 'not found' in account_info(uuid):
-        await update.message.reply_text("""⭕️اکانت شما پیدا نشد!
-✅در صورتی که مطمعن هستید درست وارد کردید ولی اکانتتون پیدا نشده اکانت شما به پایان رسیده و از سرور پاک شده.
-⛔️اگر نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید""")
-        return None
+        await update.message.reply_text("<b>📍اطلاعات اکانت شما پیدا نشد!</b> \n مطمئنید <b>ID</b> رو درست وارد کردین؟ \n اگه نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید... \n  نسبت به اینکه چه نرم افزاری نصب دارین به شما کمک میکنم.",parse_mode=ParseMode.HTML)
+        return 
     
     up,down,total,expire_time = account_info(uuid)
     keyboard = [
@@ -100,10 +104,17 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 اگ نمیدونی چجوری پیداش کنی روی /what بزن""")
 
 
+async def post_init(application: Application):
+    await application.bot.set_my_commands([
+        BotCommand("/start", "استارت"),
+        BotCommand("/what", "چه نرم افزاری استفاده میکنید؟"),
+    ])
+
+
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(token).build()
+    application = Application.builder().token(token).post_init(post_init).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_handler))
 
