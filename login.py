@@ -1,9 +1,12 @@
+import re
 import requests
 import json
 from keys import *
+from deep_translator import GoogleTranslator
 
 url_login = "login"
 url_lists = "xui/inbound/list"
+translator = GoogleTranslator(source='auto', target='en')
 
 # get panel authentication info
 servers = [
@@ -32,8 +35,9 @@ def write_json(json_data):
 def login():
     with open(json_file, 'w') as f:
         lists = []
-    status = True
+
     for server in servers:
+        server_name = re.findall(r"http.?://(.*):", server['url'])[0]
         payload = {
             "username": server['user_panel'],
             "password": server['pass_panel']
@@ -42,13 +46,14 @@ def login():
         session = requests.Session()
         response = session.post(server['url'] + url_login, data=payload)
 
-        if 'false' in response.text:
-            print(f"login Failed server {server['url']}")
-            status = False
-
-        if status:
+        if response.json()['success']:
             list = session.post(server['url'] + url_lists).json()['obj']
             lists.extend(list)
+            print(f"{server_name} ➜",
+                  translator.translate(response.json()['msg']))
+        else:
+            print(f"{server_name} ➜",
+                  translator.translate(response.json()['msg']))
 
     write_json(lists)
 
