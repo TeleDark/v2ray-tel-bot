@@ -56,7 +56,7 @@ def login():
                             json.loads(list[i]['settings'])['clients'][j])
                         new_list.append(list[i]['clientStats'][j])
                 list = new_list
-            except KeyError:
+            except:
                 pass
             
             lists.extend(list)
