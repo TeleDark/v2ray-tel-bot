@@ -33,8 +33,9 @@ def write_json(json_data):
 
 # login to all panels and save data
 def login():
-    with open(json_file, 'w') as f:
-        lists = []
+    open(json_file, 'w').close()
+    lists = []
+    new_list = []
 
     for server in servers:
         server_name = re.findall(r"http.?://(.*):", server['url'])[0]
@@ -48,6 +49,16 @@ def login():
 
         if response.json()['success']:
             list = session.post(server['url'] + url_lists).json()['obj']
+            try:
+                for i in range(len(list)):
+                    for j in range(len(list[i]['clientStats'])):
+                        list[i]['clientStats'][j]['settings'] = str(
+                            json.loads(list[i]['settings'])['clients'][j])
+                        new_list.append(list[i]['clientStats'][j])
+                list = new_list
+            except KeyError:
+                pass
+            
             lists.extend(list)
             print(f"{server_name} ➜",
                   translator.translate(response.json()['msg']))
