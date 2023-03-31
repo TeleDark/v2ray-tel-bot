@@ -4,6 +4,12 @@ from keys import *
 from datetime import datetime
 from persiantools.jdatetime import JalaliDateTime
 
+ONE_KB = 1024
+ONE_MB = ONE_KB * 1024
+ONE_GB = ONE_MB * 1024
+ONE_TB = ONE_GB * 1024
+ONE_PB = ONE_TB * 1024
+
 # convert 1 Gigabytes to Bytes
 mb_or_gb = 1073741824
 
@@ -12,37 +18,35 @@ def read_json():
     with open(json_file) as f:
         return json.load(f)
 
-# convert traffic consumed to gigabytes 
-def gb(traffic_usage):
-    gibibytes = traffic_usage / (1024 ** 3)
-    return str(round(gibibytes, 2)) + "GB"
-
-# convert traffic consumed to megabyte
-def mb(traffic_usage):
-    mib = traffic_usage / 1048.576
-    return str(round(mib / 10)/100) + "MB"
-
-# checking the amount of traffic based on gigabytes and megabytes
-def check_mb_or_gb(traffic):
-    if traffic >= mb_or_gb:
-        return gb(traffic)
+# checking the amount of traffic
+def sizeFormat(size):
+    if (size < ONE_KB):
+        return "{:.2f}".format(size) + " B"
+    elif (size < ONE_MB):
+        return "{:.2f}".format(size / ONE_KB) + " KB"
+    elif (size < ONE_GB):
+        return "{:.2f}".format(size / ONE_MB) + " MB"
+    elif (size < ONE_TB):
+        return "{:.2f}".format(size / ONE_GB) + " GB"
+    elif (size < ONE_PB):
+        return "{:.2f}".format(size / ONE_TB) + " TB"
     else:
-        return mb(traffic)
+        return "{:.2f}".format(size / ONE_PB) + " PB"
 
 # checking the amount of traffic uploaded
 def check_up(user_index, data):
-    return check_mb_or_gb(data[user_index]['up'])
+    return sizeFormat(data[user_index]['up'])
 
 # checking the amount of downloaded
 def check_down(user_index, data):
-    return check_mb_or_gb(data[user_index]['down'])
+    return sizeFormat(data[user_index]['down'])
 
 # checking the total amount of traffic
 def check_total(user_index, data):
     total = data[user_index]['total']
     if total == 0:
         return '♾'
-    return check_mb_or_gb(total)
+    return sizeFormat(total)
 
 # checking the expiry Time
 def check_expiryTime(user_index, data):
