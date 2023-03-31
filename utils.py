@@ -21,7 +21,7 @@ def read_json():
 # checking the amount of traffic
 def sizeFormat(size):
     if (size < ONE_KB):
-        return "{:.2f}".format(size) + " B"
+        return "{:.0f}".format(size) + " B"
     elif (size < ONE_MB):
         return "{:.2f}".format(size / ONE_KB) + " KB"
     elif (size < ONE_GB):
