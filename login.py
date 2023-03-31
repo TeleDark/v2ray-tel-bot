@@ -2,11 +2,9 @@ import re
 import requests
 import json
 from keys import *
-from deep_translator import GoogleTranslator
 
 url_login = "login"
 url_lists = "xui/inbound/list"
-translator = GoogleTranslator(source='auto', target='en')
 
 # get panel authentication info
 servers = [
@@ -64,13 +62,11 @@ def login():
                 list = new_list
             except KeyError:
                 pass
-            
+
             lists.extend(list)
-            print(f"{server_name} ➜",
-                  translator.translate(response.json()['msg']))
+            print(f"{server_name} ➜ login successful")
         else:
-            print(f"{server_name} ➜",
-                  translator.translate(response.json()['msg']))
+            print(f"{server_name} ➜ wrong user name or password")
 
     write_json(lists)
 
