@@ -51,12 +51,18 @@ def login():
             list = session.post(server['url'] + url_lists).json()['obj']
             try:
                 for i in range(len(list)):
+                    prev = ''
                     for j in range(len(list[i]['clientStats'])):
+                        if prev == json.loads(list[i]['settings'])['clients'][0]['id']:
+                            break
+                        prev = json.loads(list[i]['settings'])[
+                            'clients'][0]['id']
+
                         list[i]['clientStats'][j]['settings'] = str(
                             json.loads(list[i]['settings'])['clients'][j])
                         new_list.append(list[i]['clientStats'][j])
                 list = new_list
-            except:
+            except KeyError:
                 pass
             
             lists.extend(list)
