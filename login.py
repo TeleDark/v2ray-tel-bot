@@ -36,15 +36,24 @@ def login():
     new_list = []
 
     for server in servers:
-        server_name = re.findall(r"http.?://(.*):", server['url'])[0]
+        try:
+            server_name = re.findall(r"http.?://(.*):", server['url'])[0]
+        except IndexError:
+            print(f"{server['url']} ➜ The URL structure is incorrect")
+            break
+            
         payload = {
             "username": server['user_panel'],
             "password": server['pass_panel']
         }
 
         session = requests.Session()
-        response = session.post(server['url'] + url_login, data=payload)
-
+        try: 
+            response = session.post(server['url'] + url_login, data=payload)
+        except (requests.exceptions.InvalidURL, requests.exceptions.InvalidSchema, requests.exceptions.ConnectionError):
+            print(f"{server['url']} ➜ incorrect URL or port number")
+            break
+        
         if response.json()['success']:
             list = session.post(server['url'] + url_lists).json()['obj']
             try:
