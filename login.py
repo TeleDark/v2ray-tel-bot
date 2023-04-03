@@ -56,22 +56,40 @@ def login():
         
         if response.json()['success']:
             list = session.post(server['url'] + url_lists).json()['obj']
-            try:
+
+            if 'clientStats' in list[0]:
+                """ English panel """
+
                 for i in range(len(list)):
                     prev = ''
-                    for j in range(len(list[i]['clientStats'])):
-                        if prev == json.loads(list[i]['settings'])['clients'][0]['id']:
-                            break
-                        prev = json.loads(list[i]['settings'])[
-                            'clients'][0]['id']
+                    try:
+                        client_emails = [list[i]['clientStats'][j]['email'] for j in range(len(list[i]['clientStats']))]
+                        setting_emails = [json.loads(list[i]['settings'])['clients'][j]['email'] for j in range(len(json.loads(list[i]['settings'])['clients']))]
+                        
+                        try:
+                            k = 0
+                            for j in range(len(client_emails)):
+                                if client_emails[j] not in setting_emails:
+                                    del list[i]['clientStats'][j-k]
+                                    k += 1
+                        except Exception as e:
+                            print(e)
 
-                        list[i]['clientStats'][j]['settings'] = str(
-                            json.loads(list[i]['settings'])['clients'][j])
-                        new_list.append(list[i]['clientStats'][j])
-                list = new_list
-            except KeyError:
-                pass
+                        for j in range(len(list[i]['clientStats'])):
 
+                            if prev == json.loads(list[i]['settings'])['clients'][j]['id']:
+                                break
+                            prev = json.loads(list[i]['settings'])[
+                                'clients'][j]['id']
+                            
+                            list[i]['clientStats'][j]['settings'] = str(
+                                json.loads(list[i]['settings'])['clients'][j])
+                            
+                            new_list.append(list[i]['clientStats'][j])
+                    except Exception as e:
+                        print(e)
+
+                list = new_list                    
             lists.extend(list)
             print(f"{server_name} ➜ login successful")
         else:
