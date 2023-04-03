@@ -36,6 +36,9 @@ def login():
     new_list = []
 
     for server in servers:
+        if server['url'][-1] != '/':
+            server['url']+='/'
+        
         try:
             server_name = re.findall(r"http.?://(.*):", server['url'])[0]
         except IndexError:
