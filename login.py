@@ -58,42 +58,49 @@ def login():
             break
         
         if response.json()['success']:
-            list = session.post(server['url'] + url_lists).json()['obj']
+            data_list = session.post(server['url'] + url_lists).json()['obj']
 
-            if 'clientStats' in list[0]:
+            if 'clientStats' in data_list[0]:
                 """ English panel """
 
-                for i in range(len(list)):
+                for i in range(len(data_list)):
                     prev = ''
                     try:
-                        client_emails = [list[i]['clientStats'][j]['email'] for j in range(len(list[i]['clientStats']))]
-                        setting_emails = [json.loads(list[i]['settings'])['clients'][j]['email'] for j in range(len(json.loads(list[i]['settings'])['clients']))]
+                        client_emails = [data_list[i]['clientStats'][j]['email'] for j in range(len(data_list[i]['clientStats']))]
+                        setting_emails = [json.loads(data_list[i]['settings'])['clients'][j]['email'] for j in range(len(json.loads(data_list[i]['settings'])['clients']))]
                         
                         try:
                             k = 0
                             for j in range(len(client_emails)):
                                 if client_emails[j] not in setting_emails:
-                                    del list[i]['clientStats'][j-k]
+                                    del data_list[i]['clientStats'][j-k]
                                     k += 1
                         except Exception as e:
                             print(e)
 
-                        for j in range(len(list[i]['clientStats'])):
+                        inbound = data_list[i]['clientStats']
+                        setting = json.loads(data_list[i]['settings'])[
+                            'clients']
+                        sorted_inbound = sorted(inbound, key=lambda x: [
+                            d['email'] for d in setting].index(x['email']))
+                        data_list[i]['clientStats'] = sorted_inbound
 
-                            if prev == json.loads(list[i]['settings'])['clients'][j]['id']:
+                        for j in range(len(data_list[i]['clientStats'])):
+
+                            if prev == json.loads(data_list[i]['settings'])['clients'][j]['id']:
                                 break
-                            prev = json.loads(list[i]['settings'])[
+                            prev = json.loads(data_list[i]['settings'])[
                                 'clients'][j]['id']
                             
-                            list[i]['clientStats'][j]['settings'] = str(
-                                json.loads(list[i]['settings'])['clients'][j])
-                            
-                            new_list.append(list[i]['clientStats'][j])
+                            data_list[i]['clientStats'][j]['settings'] = str(
+                                json.loads(data_list[i]['settings'])['clients'][j])
+                            new_list.append(data_list[i]['clientStats'][j])
+
                     except Exception as e:
                         print(e)
 
-                list = new_list                    
-            lists.extend(list)
+                data_list = new_list                    
+            lists.extend(data_list)
             print(f"{server_name} ➜ login successful")
         else:
             print(f"{server_name} ➜ wrong user name or password")
