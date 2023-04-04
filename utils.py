@@ -45,6 +45,10 @@ def check_down(user_index, data):
 def check_used(user_index, data):
     return sizeFormat(data[user_index]['down'] + data[user_index]['up'])
 
+
+def status(user_index, data):
+    return "✅ فعال" if data[user_index]['enable'] else "⛔️غیرفعال"
+
 # checking the total amount of traffic
 def check_total(user_index, data):
     total = data[user_index]['total']
@@ -81,4 +85,4 @@ def account_info(uuid):
         return 'not found'
     
     if found:
-        return [check_up(user_index, data), check_down(user_index, data), check_used(user_index, data), check_total(user_index, data), check_expiryTime(user_index, data)]
+        return [status(user_index, data), check_up(user_index, data), check_down(user_index, data), check_used(user_index, data), check_total(user_index, data), check_expiryTime(user_index, data)]
