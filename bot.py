@@ -63,8 +63,9 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("<b>📍اطلاعات اکانت شما پیدا نشد!</b> \n مطمئنید <b>ID</b> رو درست وارد کردین؟ \n اگه نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید... \n  نسبت به اینکه چه نرم افزاری نصب دارین به شما کمک میکنم.",parse_mode=ParseMode.HTML)
         return 
     
-    status, up, down, used, total, expire_time = account_info(uuid)
-    rem_time, expiry = expire_time
+    status, up, down, used, total, expiry = account_info(uuid)
+    rem_time, expiry = expiry
+    
     keyboard = [
         [InlineKeyboardButton(f"⚙️ وضعیت اکانت: {status}", callback_data='1')],
         [
