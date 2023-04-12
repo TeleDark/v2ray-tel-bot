@@ -56,6 +56,35 @@ def check_total(user_index, data):
         return '♾'
     return sizeFormat(total)
 
+
+def extract_time(time_rem):
+    try:
+        if 'day' not in time_rem:
+            result = list(re.findall(
+                r"(\d{1,2}):(\d{1,2}):", time_rem)[0])
+        else:
+            result = list(re.findall(
+                r"^(?!-)(\d*) day.?, (\d{1,2}):(\d{1,2}):", time_rem)[0])
+    except IndexError:
+        return 'اتمام سرویس'
+        
+    if len(result) == 3:
+        day, hour, minute = result
+    else: 
+        hour, minute = result
+        day = ''
+    if day != '':
+        day = day + ' روز و '
+
+    if hour != '0':
+        hour = hour + ' ساعت و '
+    elif hour == '0':
+        hour = ''
+
+    minute = minute + ' دقیقه'
+    rem_time = day + hour + minute
+    return rem_time
+
 # checking the expiry Time
 def check_expiryTime(user_index, data):
     time_stamp = data[user_index]['expiryTime']
@@ -68,10 +97,14 @@ def check_expiryTime(user_index, data):
         s).strftime('%Y-%m-%d %H:%M:%S')
 
     date = datetime.strptime(timestamp_to_strtime, "%Y-%m-%d %H:%M:%S")
+    date_time_rem = str(date - datetime.now())
+
+    time_rem = extract_time(date_time_rem)
+    
     jdate = JalaliDateTime.to_jalali(
         datetime(date.year, date.month, date.day, date.hour, date.minute, date.second)).strftime("%Y-%m-%d %H:%M:%S")
 
-    return jdate
+    return [time_rem, jdate]
 
 # get account info based on uuid
 def account_info(uuid):

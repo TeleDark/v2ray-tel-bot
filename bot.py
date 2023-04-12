@@ -64,6 +64,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return 
     
     status, up, down, used, total, expire_time = account_info(uuid)
+    rem_time, expiry = expire_time
     keyboard = [
         [InlineKeyboardButton(f"⚙️ وضعیت اکانت: {status}", callback_data='1')],
         [
@@ -71,11 +72,13 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             InlineKeyboardButton(f"⬇️ {down} :دانلود",callback_data='1',)
         ],
         [InlineKeyboardButton(f"{used} :میزان مصرف⏳", callback_data='1')],
+        [InlineKeyboardButton(
+            f"🕒 زمان باقی ما: {rem_time}", callback_data='1')],
         [InlineKeyboardButton(f" 🌐 حجم کل: {total}", callback_data='1')],
-        [InlineKeyboardButton(f"{expire_time}",callback_data='1')],
+        [InlineKeyboardButton(f"{expiry} 🔚", callback_data='1')],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text('💠اطلاعات سرویس شما تا این لحظه💠', reply_markup=reply_markup)
+    await update.message.reply_text('💠 اطلاعات سرویس شما تا این لحظه 💠', reply_markup=reply_markup)
 
 
 
