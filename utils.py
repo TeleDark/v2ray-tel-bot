@@ -89,7 +89,7 @@ def extract_time(time_rem):
 def check_expiryTime(user_index, data):
     time_stamp = data[user_index]['expiryTime']
     if time_stamp == 0:
-        return 'زمان ♾'
+        return ['♾', 'زمان ♾']
     
     s = time_stamp / 1000.0
 
