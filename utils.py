@@ -1,5 +1,6 @@
 import re
 import json
+import base64
 from keys import *
 from datetime import datetime
 from persiantools.jdatetime import JalaliDateTime
@@ -9,9 +10,6 @@ ONE_MB = ONE_KB * 1024
 ONE_GB = ONE_MB * 1024
 ONE_TB = ONE_GB * 1024
 ONE_PB = ONE_TB * 1024
-
-# convert 1 Gigabytes to Bytes
-mb_or_gb = 1073741824
 
 # read data from json file
 def read_json():
@@ -67,10 +65,10 @@ def extract_time(time_rem):
                 r"^(?!-)(\d*) day.?, (\d{1,2}):(\d{1,2}):", time_rem)[0])
     except IndexError:
         return 'اتمام سرویس'
-        
+
     if len(result) == 3:
         day, hour, minute = result
-    else: 
+    else:
         hour, minute = result
         day = ''
     if day != '':
@@ -90,7 +88,7 @@ def check_expiryTime(user_index, data):
     time_stamp = data[user_index]['expiryTime']
     if time_stamp == 0:
         return ['♾', 'زمان ♾']
-    
+
     s = time_stamp / 1000.0
 
     timestamp_to_strtime = datetime.fromtimestamp(
@@ -100,18 +98,53 @@ def check_expiryTime(user_index, data):
     date_time_rem = str(date - datetime.now())
 
     time_rem = extract_time(date_time_rem)
-    
+
     jdate = JalaliDateTime.to_jalali(
         datetime(date.year, date.month, date.day, date.hour, date.minute, date.second)).strftime("%Y-%m-%d %H:%M:%S")
 
     return [time_rem, jdate]
 
+
+def parseVmess(vmesslink):
+    vmscheme = 'vmess://'
+    if vmesslink.startswith(vmscheme):
+        bs = vmesslink[8:]
+        blen = len(bs)
+        if blen % 4 > 0:
+            bs += "=" * (4 - blen % 4)
+
+        vms = base64.b64decode(bs).decode()
+        return vms
+
 # get account info based on uuid
-def account_info(uuid):
+def account_info(id):
     data = read_json()
     try:
-        settings_data = str([data[i]['settings'] for i in range(len(data))])
-        user_index = re.findall(".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(uuid)
+        settings_data = str([data[i]['settings']for i in range(len(data))])
+
+        if re.match(r"^vmess://.*", id):
+            id = re.findall(r".{8}-.{4}-.{4}-.{4}-.{12}", parseVmess(id))[0]
+            user_index = re.findall(
+                r".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
+
+        elif re.match(r"^vless://.*@.*", id):
+            id = re.findall(r"^vless://(.{8}-.{4}-.{4}-.{4}-.{12})@", id)[0]
+            user_index = re.findall(
+                r".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
+            
+        elif re.match(".{8}-.{4}-.{4}-.{4}-.{12}", id):
+            user_index = re.findall(
+                ".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
+
+        # elif re.match(r"^[1-9][0-9]{2,5}", id):
+        #     settings_data = str([data[i] for i in range(len(data))])
+        #     user_index = re.findall(
+        #         r"port.: ([0-9]*),", settings_data).index(id)
+
+        else:
+            user_index = re.findall(
+                "'email': '(.{1,50})', ", settings_data).index(id)
+                    
         found = True
 
     except ValueError:
