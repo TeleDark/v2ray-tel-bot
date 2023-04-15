@@ -99,7 +99,15 @@ def login():
                     except Exception as e:
                         print(e)
 
-                data_list = new_list                    
+                data_list = new_list    
+            else:
+                for i in range(len(data_list)):
+                    data_list[i].pop('streamSettings')
+                    data_list[i].pop('sniffing')
+                    data_list[i].pop('tag')
+                    data_list[i]['settings'] = str(json.loads(
+                        data_list[i]['settings'])['clients'][0])[:-1] + ", 'email': '" + data_list[i].pop('remark') + "', "
+
             lists.extend(data_list)
             print(f"{server_name} ➜ login successful")
         else:

@@ -23,21 +23,25 @@ from telegram.constants import ParseMode
 WHAT_APP = {
     "Nekoray": {
         "name": "Nekoray",
+        'desc': "Nekoray",
         "image_path": os.path.join(real_dir,"images/nekoray.jpg")
     },
 
     "V2rayNG": {
         "name": "V2rayNG",
+        "desc": "V2rayNG",
         "image_path": os.path.join(real_dir,"images/v2rayng.jpg")
     },
 
     "OneClick": {
         "name": "OneClick",
+        "desc": "OneClick",
         "image_path": os.path.join(real_dir,"images/oneclick.jpg")
     },
 
     "NamsternetV": {
         "name": "NamsternetV",
+        "desc": "NamsternetV",
         "image_path": os.path.join(real_dir,"images/napsternetv.jpg")
     },
 
@@ -74,7 +78,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ],
         [InlineKeyboardButton(f"{used} :میزان مصرف⏳", callback_data='1')],
         [InlineKeyboardButton(
-            f"🕒 زمان باقی ما: {rem_time}", callback_data='1')],
+            f"🕒 زمان باقی : {rem_time}", callback_data='1')],
         [InlineKeyboardButton(f" 🌐 حجم کل: {total}", callback_data='1')],
         [InlineKeyboardButton(f"{expiry} 🔚", callback_data='1')],
     ]
@@ -97,15 +101,13 @@ async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     query = update.callback_query
     await query.answer()
     what_app = query.data.split("|")[1]
+    desc_app = f"{WHAT_APP[what_app]['desc']}"
     image_path = f"{WHAT_APP[what_app]['image_path']}"
 
-    await query.message.reply_photo(open(image_path, 'rb'), what_app)
+    await query.message.reply_photo(open(image_path, 'rb'), desc_app)
     await query.delete_message()
 
-
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Display a help message"""
-    user_id = update.message.from_user.id
     await update.message.reply_text("""نسبت به اینکه چه نرم افزاری نصب داری فرق میکنه...
 اگ نمیدونی چجوری پیداش کنی روی /what بزن""")
 
