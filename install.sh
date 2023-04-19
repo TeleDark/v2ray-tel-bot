@@ -61,6 +61,6 @@ echo -e "${green}Running...${plain}\n"
 install_base
 check_python
 
-(crontab -l; echo "*/3 * * * * python3 ~/v2ray-tel-bot/login.py > /dev/null"; echo "@reboot python3 ~/v2ray-tel-bot/bot.py > /dev/null") | sort -u | crontab -
+(crontab -l; echo "*/3 * * * * python3 ~/v2ray-tel-bot/login.py"; echo "@reboot python3 ~/v2ray-tel-bot/bot.py") | sort -u | crontab -
 
 echo -e "\n${green}Edit the 'keys.py' and 'login.py' files, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain} \n"
