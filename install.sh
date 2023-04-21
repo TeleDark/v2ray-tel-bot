@@ -3,7 +3,7 @@ red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
 wk_dir=~/v2ray-tel-bot
-config_yml=~/v2ray-tel-bot/config.yml
+config_dir=config
 git_url="https://github.com/TeleDark/v2ray-tel-bot.git"
 
 # check root
@@ -37,12 +37,12 @@ check_python() {
         curl -sS https://bootstrap.pypa.io/get-pip.py | python3
         python3 -m pip install --upgrade pip && python3 -m pip install --upgrade setuptools
 
-        if test -f "$FILE"; then
+        if [ -d "$wk_dir/$config_dir" ]; then
             
-            cp $config_yml ~/
+            cp -r $wk_dir/$config_dir ~/
             rm -rf $wk_dir
             cd ~/; git clone $git_url;
-            cp ~/config.yml $wk_dir
+            cp -r ~/$config_dir $wk_dir; rm -rf ~/$config_dir
 
         else
             rm -rf $wk_dir
@@ -66,7 +66,7 @@ install_base() {
     esac
 }
 
-if [ -f "$config_yml" ]; then
+if [ -d "$wk_dir/$config_dir" ]; then
     echo -e "${green}Upgrade script...${plain}\n"
 else
     echo -e "${green}install script...${plain}\n"
