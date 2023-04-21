@@ -77,4 +77,4 @@ check_python
 
 (crontab -l; echo "*/3 * * * * python3 ~/v2ray-tel-bot/login.py"; echo "@reboot python3 ~/v2ray-tel-bot/bot.py") | sort -u | crontab -
 
-echo -e "\n${green}Edit the 'keys.py' and 'login.py' files, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain}"
+echo -e "\n${green}Edit 'config.yml' file, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain}"
