@@ -8,7 +8,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/TeleDark/v2ray-tel-bot/main/in
 ```
 
 ## setup
-1. Enter the bot source folder using the command `cd ~/v2ray-tel-bot/`.
-2. open the config.yml file and put your Telegram bot token and information related to your panels in it. open with `nano config.yml`. 
-3. If you want to customize the Telegram bot messages, please edit the messages.yml file using the `nano messages.yml` command.
+1. Enter the bot source folder using the command `cd ~/v2ray-tel-bot/`
+2. open the config.yml file and put your Telegram bot token and information related to your panels in it. open with `nano config/config.yml`.
+3. If you want to customize the Telegram bot messages, edit the `messages.yml` file using the `nano config/messages.yml` command
 4. restart your server using the `reboot` command.
