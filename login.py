@@ -6,23 +6,6 @@ from keys import *
 url_login = "login"
 url_lists = "xui/inbound/list"
 
-# get panel authentication info
-servers = [
-
-    {
-        'url': "panel url example: https://iran.example.com:7000/",
-        'user_panel': 'admin',
-        'pass_panel': 'admin',
-    },
-    # {
-    #     'url': "https://iran.example.com:7000/",
-    #     'user_panel': 'admin',
-    #     'pass_panel': 'admin'
-    # },
-
-]
-
-
 # write data in json file
 def write_json(json_data):
     with open(json_file, 'a') as f:
@@ -31,34 +14,36 @@ def write_json(json_data):
 
 # login to all panels and save data
 def login():
-    open(json_file, 'w').close()
     lists = []
     new_list = []
 
-    for server in servers:
-        if server['url'][-1] != '/':
-            server['url']+='/'
+    for panel in panels:
+        if panel['url'][-1] != '/':
+            panel['url']+='/'
         
         try:
-            server_name = re.findall(r"http.?://(.*):", server['url'])[0]
+            panel_name = re.findall(r"http.?://(.*):", panel['url'])[0]
         except IndexError:
-            print(f"{server['url']} ➜ The URL structure is incorrect")
+            print(f"{panel['url']} : The URL structure is incorrect")
             break
             
         payload = {
-            "username": server['user_panel'],
-            "password": server['pass_panel']
+            "username": panel['username'],
+            "password": panel['password']
         }
 
         session = requests.Session()
         try: 
-            response = session.post(server['url'] + url_login, data=payload)
+            response = session.post(panel['url'] + url_login, data=payload)
         except (requests.exceptions.InvalidURL, requests.exceptions.InvalidSchema, requests.exceptions.ConnectionError):
-            print(f"{server['url']} ➜ incorrect URL or port number")
+            print(f"{panel['url']} : incorrect URL or port number")
             break
         
         if response.json()['success']:
-            data_list = session.post(server['url'] + url_lists).json()['obj']
+            data_list = session.post(panel['url'] + url_lists).json()['obj']
+            if not data_list:
+                print(panel_name,': is empty')
+                continue
 
             if 'clientStats' in data_list[0]:
                 """ English panel """
@@ -109,10 +94,11 @@ def login():
                         data_list[i]['settings'])['clients'][0])[:-1] + ", 'email': '" + data_list[i].pop('remark') + "', "
 
             lists.extend(data_list)
-            print(f"{server_name} ➜ login successful")
+            print(f"{panel_name} : login successful")
         else:
-            print(f"{server_name} ➜ wrong user name or password")
-
+            print(f"{panel_name} : wrong Username or Password")
+    
+    open(json_file, 'w').close()
     write_json(lists)
 
 
