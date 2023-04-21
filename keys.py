@@ -2,8 +2,8 @@ import os
 import yaml
 real_dir = os.path.dirname(os.path.realpath(__file__))
 json_file = os.path.join(real_dir,"accounts_info.json")
-config_yaml_file = os.path.join(real_dir,"config.yml")
-msg_yaml_file = os.path.join(real_dir, "messages.yml")
+config_yaml_file = os.path.join(real_dir, "config/config.yml")
+msg_yaml_file = os.path.join(real_dir, "config/messages.yml")
 
 
 # load yaml config
