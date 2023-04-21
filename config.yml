@@ -1,0 +1,10 @@
+telegram_token: ""
+
+panels:
+  - url: http://web.example.com:54321
+    username: admin
+    password: admin
+  
+  # - url: https://web.example.com:54321
+  #   username: admin
+  #   password: admin

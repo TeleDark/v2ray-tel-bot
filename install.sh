@@ -2,7 +2,8 @@
 red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
-wk_dir="/root/v2ray-tel-bot"
+wk_dir=~/v2ray-tel-bot
+config_yml=~/v2ray-tel-bot/config.yml
 git_url="https://github.com/TeleDark/v2ray-tel-bot.git"
 
 # check root
@@ -36,7 +37,17 @@ check_python() {
         curl -sS https://bootstrap.pypa.io/get-pip.py | python3
         python3 -m pip install --upgrade pip && python3 -m pip install --upgrade setuptools
 
-        cd ~/; git clone $git_url;
+        if test -f "$FILE"; then
+            
+            cp $config_yml ~/
+            rm -rf $wk_dir
+            cd ~/; git clone $git_url;
+            cp ~/config.yml $wk_dir
+
+        else
+            rm -rf $wk_dir
+            cd ~/; git clone $git_url;
+        fi
         pip install -r $wk_dir/requirements.txt
 
     else
@@ -50,17 +61,20 @@ install_base() {
             echo -e "${red}The script does not support CentOS-based operating systems ${plain}\n"
             ;;
         *)
-            apt update && apt install -y curl git wget python3
+            apt update && apt install -y git wget python3
             ;;
     esac
 }
 
-# && apt upgrade -y
-echo -e "${green}Running...${plain}\n"
+if [ -f "$config_yml" ]; then
+    echo -e "${green}Upgrade script...${plain}\n"
+else
+    echo -e "${green}install script...${plain}\n"
+fi
 
 install_base
 check_python
 
 (crontab -l; echo "*/3 * * * * python3 ~/v2ray-tel-bot/login.py > /dev/null"; echo "@reboot python3 ~/v2ray-tel-bot/bot.py > /dev/null") | sort -u | crontab -
 
-echo -e "\n${green}Edit the 'keys.py' and 'login.py' files, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain} \n"
+echo -e "\n${green}Edit the 'keys.py' and 'login.py' files, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain}"

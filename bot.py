@@ -52,9 +52,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Inform user about what this bot can do"""
     user_name = update.message.from_user.first_name
 
-    await update.message.reply_text(f"""سلام {user_name} عزیز خوش اومدی
-برای اینکه اطلاعات فیلترشکن رو ببینی نیازه آیدی(uuid/id) اکانتتو بفرستی...
-اگ نمیدونی چجوری آیدی رو بدست بیاری رو /what بزن""")
+    await update.message.reply_text(f"سلام {user_name} عزیز خوش اومدی\n" + msg_yaml['start_msg'])
+
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -64,7 +63,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
     uuid = update.message.text
     if 'not found' in account_info(uuid):
-        await update.message.reply_text("<b>📍اطلاعات اکانت شما پیدا نشد!</b> \n مطمئنید <b>ID</b> رو درست وارد کردین؟ \n اگه نمیدونین چجوری آیدی رو بدست بیارین رو /what بزنید... \n  نسبت به اینکه چه نرم افزاری نصب دارین به شما کمک میکنم.",parse_mode=ParseMode.HTML)
+        await update.message.reply_text(msg_yaml['not_found'], parse_mode=ParseMode.HTML)
         return 
     
     status, up, down, used, total, expiry = account_info(uuid)
@@ -78,12 +77,12 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ],
         [InlineKeyboardButton(f"{used} :میزان مصرف⏳", callback_data='1')],
         [InlineKeyboardButton(
-            f"🕒 زمان باقی : {rem_time}", callback_data='1')],
+            f"🕒 زمان باقی مانده : {rem_time}", callback_data='1')],
         [InlineKeyboardButton(f" 🌐 حجم کل: {total}", callback_data='1')],
         [InlineKeyboardButton(f"{expiry} 🔚", callback_data='1')],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text('💠 اطلاعات سرویس شما تا این لحظه 💠', reply_markup=reply_markup)
+    await update.message.reply_text(msg_yaml['acc_info'], reply_markup=reply_markup)
 
 
 
@@ -94,7 +93,7 @@ async def show_what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYP
             what_app_dict["name"], callback_data=f"what_app|{what_app}")])
     
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("چه نرم افزاری استفاده میکنید؟", reply_markup=reply_markup)
+    await update.message.reply_text(msg_yaml['whatapp_msg'], reply_markup=reply_markup)
 
 
 async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -108,8 +107,7 @@ async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await query.delete_message()
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("""نسبت به اینکه چه نرم افزاری نصب داری فرق میکنه...
-اگ نمیدونی چجوری پیداش کنی روی /what بزن""")
+    await update.message.reply_text(msg_yaml['help_msg'])
 
 
 async def post_init(application: Application):
@@ -122,7 +120,7 @@ async def post_init(application: Application):
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(token).post_init(post_init).build()
+    application = Application.builder().token(telegram_token).post_init(post_init).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_handler))
 
