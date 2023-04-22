@@ -53,7 +53,10 @@ def check_total(user_index, data):
     return sizeFormat(total)
 
 def traffic_remaining(user_index, data):
-    return sizeFormat(data[user_index]['total'] - (data[user_index]['down'] + data[user_index]['up']))
+    if data[user_index]['total'] != 0:
+        return sizeFormat(data[user_index]['total'] - (data[user_index]['down'] + data[user_index]['up']))
+    
+    return '♾'
 
 def extract_time(time_rem):
     try:
