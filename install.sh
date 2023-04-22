@@ -48,6 +48,7 @@ check_python() {
             rm -rf $wk_dir
             cd ~/; git clone $git_url;
         fi
+        pip install --ignore-installed PyYAML
         pip install -r $wk_dir/requirements.txt
         pip3 install --upgrade requests
 
