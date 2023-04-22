@@ -27,7 +27,7 @@ check_python() {
         echo -e "${green}Python 3.10 is already installed ${plain}\n"
     else
         # install some required packages
-        apt install -y software-properties-common && add-apt-repository -y ppa:deadsnakes/ppa && apt -y install python3.10
+        apt install -y software-properties-common && add-apt-repository -y ppa:deadsnakes/ppa && apt -y install python3.10 && apt remove  -y python3-apt && apt autoremove -y && apt install -y python3-apt
     fi
 
     # Verify installation
@@ -49,6 +49,7 @@ check_python() {
             cd ~/; git clone $git_url;
         fi
         pip install -r $wk_dir/requirements.txt
+        pip3 install --upgrade requests
 
     else
         echo -e "${red}Python 3.10 installation failed ${plain}\n"
