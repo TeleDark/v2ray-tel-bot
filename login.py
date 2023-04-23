@@ -39,6 +39,10 @@ def login():
             print(f"{panel['url']} : incorrect URL or port number")
             break
         
+        
+        if response.status_code == 404:
+            print(f"{panel_name} : Are you sure your panel doesn't have a path address?")
+        
         if response.json()['success']:
             data_list = session.post(panel['url'] + url_lists).json()['obj']
             if not data_list:
@@ -86,7 +90,7 @@ def login():
 
                 data_list = new_list
 
-            if 'clientInfo' in data_list[0]:
+            elif 'clientInfo' in data_list[0]:
                 """ kafka panel """
 
                 for i in range(len(data_list)):
