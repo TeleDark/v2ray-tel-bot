@@ -40,8 +40,8 @@ WHAT_APP = {
     },
 
     "NamsternetV": {
-        "name": "NamsternetV",
-        "desc": "NamsternetV",
+        "name": "NapsterNetV",
+        "desc": "NapsterNetV",
         "image_path": os.path.join(real_dir,"images/napsternetv.jpg")
     },
 
