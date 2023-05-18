@@ -6,6 +6,7 @@ from keys import *
 
 url_login = "login"
 url_lists = "xui/inbound/list"
+url_sanaei = "panel/inbound/list"
 
 # write data in json file
 def write_json(json_data):
@@ -58,7 +59,11 @@ def get_data_from_panels():
         if panel_name in cookies:
             session.cookies.update(cookies[panel_name])
             try:
-                panels_data[panel_name] = session.post(panel['url'] + url_lists).json()['obj']
+                panel_data = session.post(panel['url'] + url_lists)
+                if panel_data.status_code != 404:
+                    panels_data[panel_name] = panel_data.json()['obj']
+                else: 
+                    panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
             except requests.exceptions.JSONDecodeError:
                 get_data_from_panels()
         else:
@@ -76,9 +81,13 @@ def get_data_from_panels():
                 print(f"{panel['url']} : incorrect URL or port number")
                 continue
 
-            cookies[panel_name] = response.cookies.get_dict()            
-            panels_data[panel_name] = session.post(panel['url'] + url_lists).json()['obj']
+            cookies[panel_name] = response.cookies.get_dict()
 
+            panel_data = session.post(panel['url'] + url_lists)
+            if panel_data.status_code != 404:
+                panels_data[panel_name] = panel_data.json()['obj']
+            else: 
+                panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
     write_pickle(cookies)
     return panels_data
 
