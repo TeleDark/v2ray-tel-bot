@@ -22,7 +22,6 @@ else
 fi
 
 check_python() {
-    # Check if Python 3.8 is installed
     if [[ $(python3 -c "import sys; print(sys.version_info[:2] >= (3, 10))") == "True" ]]; then
         curl -sS https://bootstrap.pypa.io/get-pip.py | python3
         python3 -m pip install --upgrade pip && python3 -m pip install --upgrade setuptools
