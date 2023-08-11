@@ -31,6 +31,9 @@ def sizeFormat(size):
     else:
         return "{:.2f}".format(size / ONE_PB) + " PB"
 
+def get_account_name(user_index, data):
+    return data[user_index]['email']
+
 # checking the amount of traffic uploaded
 def check_up(user_index, data):
     return sizeFormat(data[user_index]['up'])
@@ -154,4 +157,4 @@ def account_info(id):
         return 'not found'
     
     if found:
-        return [status(user_index, data), check_up(user_index, data), check_down(user_index, data), check_used(user_index, data), check_total(user_index, data), traffic_remaining(user_index, data), check_expiryTime(user_index, data)]
+        return [status(user_index, data), get_account_name(user_index, data), check_up(user_index, data), check_down(user_index, data), check_used(user_index, data), check_total(user_index, data), traffic_remaining(user_index, data), check_expiryTime(user_index, data)]

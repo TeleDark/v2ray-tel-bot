@@ -97,11 +97,13 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return ConversationHandler.END
     
     
-    status, up, down, used, total, traffic_remaining, expiry = account_info(uuid)
+    status, account_name, up, down, used, total, traffic_remaining, expiry = account_info(uuid)
     rem_time, expiry = expiry
     
     keyboard = [
+        [InlineKeyboardButton(f"نام اکانت: {account_name}", callback_data='1')],
         [InlineKeyboardButton(f"⚙️ وضعیت اکانت: {status}", callback_data='1')],
+
         [
             InlineKeyboardButton(f"⬆️ {up} :آپلود",callback_data='1'),
             InlineKeyboardButton(f"⬇️ {down} :دانلود",callback_data='1',)
