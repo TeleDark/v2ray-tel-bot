@@ -1,3 +1,5 @@
+import qrcode
+from io import BytesIO
 from keys import *
 from utils import account_info
 
@@ -14,10 +16,13 @@ from telegram.ext import (
     ContextTypes,
     MessageHandler,
     CallbackQueryHandler,
+    ConversationHandler,
     filters,
 )
 from telegram.constants import ParseMode
 
+ACCOUNT_LINK_INPUT = 1
+AFTER_QR_SENT = 2
 
 
 WHAT_APP = {
@@ -49,14 +54,39 @@ WHAT_APP = {
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Inform user about what this bot can do"""
     user_name = update.message.from_user.first_name
-
     await update.message.reply_text(f"سلام {user_name} عزیز خوش اومدی\n" + msg_yaml['start_msg'])
 
 
+async def generate_qrcode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    await update.message.reply_text(msg_yaml['qrcode']) 
+    return ACCOUNT_LINK_INPUT
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+async def process_account_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    account_link = update.message.text
+
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=3
+    )
+    qr.add_data(account_link)
+    qr.make(fit=True)
+    
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+    
+    qr_image_buffer = BytesIO()
+    qr_image.save(qr_image_buffer)
+    
+    qr_image_buffer.seek(0)
+
+    await update.message.reply_photo(photo=qr_image_buffer)    
+    return AFTER_QR_SENT
+
+
+async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # check if message is edited
     if update.edited_message is not None:
         return
@@ -64,7 +94,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     uuid = update.message.text
     if 'not found' in account_info(uuid):
         await update.message.reply_text(msg_yaml['not_found'], parse_mode=ParseMode.HTML)
-        return 
+        return ConversationHandler.END
+    
     
     status, up, down, used, total, traffic_remaining, expiry = account_info(uuid)
     rem_time, expiry = expiry
@@ -85,8 +116,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(msg_yaml['acc_info'], reply_markup=reply_markup)
-
-
+    
+    return ConversationHandler.END
 
 async def show_what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = []
@@ -96,9 +127,10 @@ async def show_what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYP
     
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(msg_yaml['whatapp_msg'], reply_markup=reply_markup)
-
+    
 
 async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    
     query = update.callback_query
     await query.answer()
     what_app = query.data.split("|")[1]
@@ -115,6 +147,7 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def post_init(application: Application):
     await application.bot.set_my_commands([
         BotCommand("/start", "استارت"),
+        BotCommand("/qrcode", "ساخت QRCode"),
         BotCommand("/what", "چه نرم افزاری استفاده میکنید؟"),
     ])
 
@@ -126,8 +159,23 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_handler))
 
-    application.add_handler(MessageHandler(
-        filters.TEXT & ~filters.COMMAND, echo))
+    conv_handler = ConversationHandler(
+
+        entry_points= [
+            CommandHandler("qrcode", generate_qrcode), MessageHandler(
+            filters.TEXT & ~filters.COMMAND, get_account_info)
+            ],
+
+        states= {
+            ACCOUNT_LINK_INPUT: [MessageHandler(filters.TEXT, process_account_link)],
+            AFTER_QR_SENT: [MessageHandler(filters.TEXT, get_account_info)]
+        },
+
+        fallbacks=[],
+    )
+
+    application.add_handler(conv_handler)
+
     application.add_handler(CommandHandler(
         "what", show_what_app_handle))
     application.add_handler(CallbackQueryHandler(
