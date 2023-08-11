@@ -46,6 +46,8 @@ check_python() {
         echo -e "${green}updating python version ${plain}\n"
         apt-get install -y software-properties-common && add-apt-repository -y ppa:deadsnakes/ppa && apt-get -y install python3.10 && unlink /usr/bin/python3 && ln -s /usr/bin/python3.10 /usr/bin/python3
     fi
+    pip install --ignore-installed PyYAML
+    pip install -r $wk_dir/requirements.txt
 }
 
 install_base() {
