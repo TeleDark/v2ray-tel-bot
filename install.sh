@@ -31,7 +31,7 @@ check_python() {
             cp -r $wk_dir/$config_dir/$config_file ~/
             rm -rf $wk_dir
             cd ~/ && git clone $git_url &&
-            cp -r ~/$config_dir/$config_file $wk_dir && rm -rf ~/$config_dir
+            cp -r ~/$config_file $wk_dir/$config_dir && rm -rf ~/$config_file
         else
             rm -rf $wk_dir
             cd ~/ && git clone $git_url;
