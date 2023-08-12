@@ -59,7 +59,7 @@ install_base() {
     esac
 }
 
-if [ -d "$wk_dir/" ]; then
+if [ -d "$wk_dir" ]; then
     echo -e "${green}Upgrade script...${plain}\n"
 else
     echo -e "${green}install script...${plain}\n"
