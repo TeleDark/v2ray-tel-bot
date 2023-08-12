@@ -3,7 +3,7 @@ red='\033[0;31m'
 green='\033[0;32m'
 plain='\033[0m'
 wk_dir=~/v2ray-tel-bot
-config_dir=config
+config_dir=config/config.yml
 git_url="https://github.com/TeleDark/v2ray-tel-bot.git"
 
 # check root
@@ -36,18 +36,16 @@ check_python() {
             cd ~/ && git clone $git_url;
         fi
 
-        pip install --ignore-installed PyYAML
-        pip install -r $wk_dir/requirements.txt
-
         (crontab -l; echo "*/3 * * * * python3 ~/v2ray-tel-bot/login.py"; echo "@reboot python3 ~/v2ray-tel-bot/bot.py"; echo "42 2 */2 * * rm -rf ~/v2ray-tel-bot/cookies.pkl") | sort -u | crontab -
-        echo -e "\n${green}Edit 'config.yml' file, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain}"
-
     else 
         echo -e "${green}updating python version ${plain}\n"
         apt-get install -y software-properties-common && add-apt-repository -y ppa:deadsnakes/ppa && apt-get -y install python3.10 && unlink /usr/bin/python3 && ln -s /usr/bin/python3.10 /usr/bin/python3
     fi
+
     pip install --ignore-installed PyYAML
     pip install -r $wk_dir/requirements.txt
+    echo -e "\n${green}Edit 'config.yml' file, then restart the server with the 'reboot' command. The bot will start working after the server comes back up.${plain}"
+
 }
 
 install_base() {
