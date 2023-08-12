@@ -26,7 +26,7 @@ check_python() {
         curl -sS https://bootstrap.pypa.io/get-pip.py | python3
         python3 -m pip install --upgrade pip && python3 -m pip install --upgrade setuptools
 
-        if [ -d "$wk_dir/$config_dir" ]; then
+        if [ -f "$wk_dir/$config_dir" ]; then
             cp -r $wk_dir/$config_dir ~/
             rm -rf $wk_dir
             cd ~/ && git clone $git_url &&
