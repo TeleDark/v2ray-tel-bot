@@ -189,11 +189,10 @@ def save_accounts_to_json():
         
         else:
             for i in range(len(data_list)):
+                data_list[i]['email'] = data_list[i].pop('remark')
                 data_list[i].pop('streamSettings')
                 data_list[i].pop('sniffing')
                 data_list[i].pop('tag')
-                data_list[i]['settings'] = str(json.loads(
-                    data_list[i]['settings'])['clients'][0])[:-1] + ", 'email': '" + data_list[i].pop('remark') + "', "
 
         lists.extend(data_list)
         print(f"{panel_name} : geting data successful")
