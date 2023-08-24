@@ -92,12 +92,13 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return
         
     uuid = update.message.text
-    if 'not found' in account_info(uuid):
+    acc_info = account_info(uuid)
+    if acc_info == 'not found':
         await update.message.reply_text(msg_yaml['not_found'], parse_mode=ParseMode.HTML)
         return ConversationHandler.END
     
     
-    status, account_name, up, down, used, total, traffic_remaining, expiry = account_info(uuid)
+    status, account_name, up, down, used, total, traffic_remaining, expiry = acc_info
     rem_time, expiry = expiry
     
     keyboard = [
