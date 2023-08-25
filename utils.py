@@ -137,17 +137,26 @@ def account_info(id):
     data = read_json()
     if re.match(r"^vmess://.*", id):
         id = re.findall(r".{8}-.{4}-.{4}-.{4}-.{12}", parseVmess(id))[0]
-
+        query = f"'id': '{id}'"
+    
     elif re.match(r"^vless://.*@.*", id):
         id = re.findall(r"^vless://(.{8}-.{4}-.{4}-.{4}-.{12})@", id)[0]
+        query = f"'id': '{id}'"
     
     elif re.match(r"^ss://.*@.*", id):
         id = parseShadowsocks(id)
+        query = f"'password': '{id}'"
+    
+    elif re.match(r"^.{8}-.{4}-.{4}-.{4}-.{12}$", id):
+        query = f"'id': '{id}'"
+    
+    else:
+        query = f"'email': '{id}'"
     
     found = False
 
     for conf in data:
-        if id in conf["settings"]:
+        if query in conf["settings"]:
             user_index = conf["id"] - 1
             found = True
             break
