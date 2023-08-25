@@ -147,6 +147,10 @@ def account_info(id):
         id = parseShadowsocks(id)
         query = f"'password': '{id}'"
     
+    elif re.match(r"^trojan://.*@.*", id):
+        id = re.findall(r"^trojan://(.+)@.+", id)[0]
+        query = f"'password': '{id}'"
+    
     elif re.match(r"^.{8}-.{4}-.{4}-.{4}-.{12}$", id):
         query = f"'id': '{id}'"
     
