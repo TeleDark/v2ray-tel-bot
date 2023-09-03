@@ -161,7 +161,7 @@ def account_info(id):
 
     for conf in data:
         if query in conf["settings"]:
-            user_index = data.index(config)
+            user_index = data.index(conf)
             found = True
             break
     
