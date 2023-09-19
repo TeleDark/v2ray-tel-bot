@@ -56,8 +56,14 @@ def check_total(user_index, data):
     return sizeFormat(total)
 
 def traffic_remaining(user_index, data):
-    if data[user_index]['total'] != 0:
-        return sizeFormat(data[user_index]['total'] - (data[user_index]['down'] + data[user_index]['up']))
+    data = data[user_index]
+    total = data['total']
+    if total != 0:
+        remaining = total - (data['down'] + data['up'])
+        if remaining <= 0:
+            return '⛔️'
+        
+        return sizeFormat(remaining)
     
     return '♾'
 
