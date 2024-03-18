@@ -130,10 +130,10 @@ def save_accounts_to_json():
 
                     for j in range(len(data_list[i]['clientStats'])):
 
-                        if prev == json.loads(data_list[i]['settings'])['clients'][j]['id']:
+                        if prev == json.loads(data_list[i]['settings'])['clients'][j]:
                             break
                         prev = json.loads(data_list[i]['settings'])[
-                            'clients'][j]['id']
+                            'clients'][j]
                         
                         data_list[i]['clientStats'][j]['settings'] = str(
                             json.loads(data_list[i]['settings'])['clients'][j])
@@ -173,10 +173,10 @@ def save_accounts_to_json():
 
                     for j in range(len(data_list[i]['clientInfo'])):
 
-                        if prev == json.loads(data_list[i]['settings'])['clients'][j]['id']:
+                        if prev == json.loads(data_list[i]['settings'])['clients'][j]:
                             break
                         prev = json.loads(data_list[i]['settings'])[
-                            'clients'][j]['id']
+                            'clients'][j]
 
                         data_list[i]['clientInfo'][j]['settings'] = str(
                             json.loads(data_list[i]['settings'])['clients'][j])

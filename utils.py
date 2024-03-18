@@ -56,8 +56,14 @@ def check_total(user_index, data):
     return sizeFormat(total)
 
 def traffic_remaining(user_index, data):
-    if data[user_index]['total'] != 0:
-        return sizeFormat(data[user_index]['total'] - (data[user_index]['down'] + data[user_index]['up']))
+    data = data[user_index]
+    total = data['total']
+    if total != 0:
+        remaining = total - (data['down'] + data['up'])
+        if remaining <= 0:
+            return '⛔️'
+        
+        return sizeFormat(remaining)
     
     return '♾'
 
@@ -122,39 +128,51 @@ def parseVmess(vmesslink):
         vms = base64.b64decode(bs).decode()
         return vms
 
+def parseShadowsocks(sslink):
+    data = re.findall(r"^ss://(.+)@.+$", sslink)[0]
+    len_data = len(data)
+    if len_data % 4 > 0:
+        data += '=' * (4 - len_data % 4)
+    
+    decoded_data = base64.b64decode(data).decode()
+    password = decoded_data.split(':')[-1]
+    return password
+
 # get account info based on uuid
 def account_info(id):
     data = read_json()
-    try:
-        settings_data = str([data[i]['settings']for i in range(len(data))])
+    if re.match(r"^vmess://.*", id):
+        id = re.findall(r".{8}-.{4}-.{4}-.{4}-.{12}", parseVmess(id))[0]
+        query = f"'id': '{id}'"
+    
+    elif re.match(r"^vless://.*@.*", id):
+        id = re.findall(r"^vless://(.{8}-.{4}-.{4}-.{4}-.{12})@", id)[0]
+        query = f"'id': '{id}'"
+    
+    elif re.match(r"^ss://.*@.*", id):
+        id = parseShadowsocks(id)
+        query = f"'password': '{id}'"
+    
+    elif re.match(r"^trojan://.*@.*", id):
+        id = re.findall(r"^trojan://(.+)@.+", id)[0]
+        query = f"'password': '{id}'"
+    
+    elif re.match(r"^.{8}-.{4}-.{4}-.{4}-.{12}$", id):
+        query = f"'id': '{id}'"
+    
+    else:
+        query = f"'email': '{id}'"
+    
+    found = False
 
-        if re.match(r"^vmess://.*", id):
-            id = re.findall(r".{8}-.{4}-.{4}-.{4}-.{12}", parseVmess(id))[0]
-            user_index = re.findall(
-                r".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
-
-        elif re.match(r"^vless://.*@.*", id):
-            id = re.findall(r"^vless://(.{8}-.{4}-.{4}-.{4}-.{12})@", id)[0]
-            user_index = re.findall(
-                r".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
-            
-        elif re.match(".{8}-.{4}-.{4}-.{4}-.{12}", id):
-            user_index = re.findall(
-                ".{8}-.{4}-.{4}-.{4}-.{12}", settings_data).index(id)
-
-        # elif re.match(r"^[1-9][0-9]{2,5}", id):
-        #     settings_data = str([data[i] for i in range(len(data))])
-        #     user_index = re.findall(
-        #         r"port.: ([0-9]*),", settings_data).index(id)
-
-        else:
-            user_index = re.findall(
-                "'email': '(.{1,50})', ", settings_data).index(id)
-                    
-        found = True
-
-    except ValueError:
-        return 'not found'
+    for conf in data:
+        if query in conf["settings"]:
+            user_index = data.index(conf)
+            found = True
+            break
     
     if found:
         return [status(user_index, data), get_account_name(user_index, data), check_up(user_index, data), check_down(user_index, data), check_used(user_index, data), check_total(user_index, data), traffic_remaining(user_index, data), check_expiryTime(user_index, data)]
+    
+    else:
+        return 'not found'
