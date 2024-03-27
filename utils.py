@@ -13,8 +13,14 @@ ONE_PB = ONE_TB * 1024
 
 # read data from json file
 def read_json():
+    if os.path.exists(json_file):
+        with open(json_file) as f:
+            return json.load(f)
+
+    os.system('python3 ./login.py')
+
     with open(json_file) as f:
-        return json.load(f)
+            return json.load(f)
 
 # checking the amount of traffic
 def sizeFormat(size):
@@ -102,7 +108,7 @@ def check_expiryTime(user_index, data):
         return ['♾', 'زمان ♾']
     if time_stamp < 0:
         return [str(int(time_stamp / -86400000)) + " روز", str(int(time_stamp / -86400000)) + " روز"]
-    
+
     s = time_stamp / 1000.0
 
     timestamp_to_strtime = datetime.fromtimestamp(
