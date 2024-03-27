@@ -100,7 +100,9 @@ def check_expiryTime(user_index, data):
     time_stamp = data[user_index]['expiryTime']
     if time_stamp == 0:
         return ['♾', 'زمان ♾']
-
+    if time_stamp < 0:
+        return [str(int(time_stamp / -86400000)) + " روز", str(int(time_stamp / -86400000)) + " روز"]
+    
     s = time_stamp / 1000.0
 
     timestamp_to_strtime = datetime.fromtimestamp(
