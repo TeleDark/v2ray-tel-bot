@@ -1,5 +1,7 @@
 import qrcode
 from io import BytesIO
+from PIL import Image
+from pyzbar.pyzbar import decode
 from keys import *
 from utils import account_info
 
@@ -8,7 +10,7 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     BotCommand,
-
+    error
 )
 from telegram.ext import (
     Application,
@@ -90,13 +92,31 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # check if message is edited
     if update.edited_message is not None:
         return
-        
-    uuid = update.message.text
-    acc_info = account_info(uuid)
+    
+    if update.message.photo:
+        # If the message contains a photo, decode the QR code
+        photo_id = update.message.photo[-1].file_id
+        photo_file = await context.bot.get_file(photo_id)
+        photo_data = await photo_file.download_as_bytearray()
+        img = Image.open(BytesIO(photo_data))
+        decode_objects = decode(img)
+
+        if decode_objects:
+            # If a QR code is found, extract the decoded text
+            decode_qrcode = decode_objects[0].data.decode("utf-8")
+            acc_info = account_info(decode_qrcode)
+        else:
+            await update.message.reply_text("لطفا QRCode ارسال کنید")
+            return ConversationHandler.END
+
+    else:
+        # If the message doesn't contain a photo, use the text message
+        client_msg = update.message.text
+        acc_info = account_info(client_msg)
+
     if acc_info == 'not found':
         await update.message.reply_text(msg_yaml['not_found'], parse_mode=ParseMode.HTML)
         return ConversationHandler.END
-    
     
     status, account_name, up, down, used, total, traffic_remaining, expiry = acc_info
     rem_time, expiry = expiry
@@ -157,16 +177,17 @@ async def post_init(application: Application):
 
 def main() -> None:
     """Run bot."""
-    # Create the Application and pass it your bot's token.
-    application = Application.builder().token(telegram_token).post_init(post_init).build()
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_handler))
+    try:
+        # Create the Application and pass it your bot's token.
+        application = Application.builder().token(telegram_token).post_init(post_init).build()
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("help", help_handler))
 
-    conv_handler = ConversationHandler(
+        conv_handler = ConversationHandler(
 
         entry_points= [
             CommandHandler("qrcode", generate_qrcode), MessageHandler(
-            filters.TEXT & ~filters.COMMAND, get_account_info)
+            ~filters.COMMAND, get_account_info)
             ],
 
         states= {
@@ -175,18 +196,23 @@ def main() -> None:
         },
 
         fallbacks=[],
-    )
+        )
 
-    application.add_handler(conv_handler)
+        application.add_handler(conv_handler)
 
-    application.add_handler(CommandHandler(
+        application.add_handler(CommandHandler(
         "what", show_what_app_handle))
-    application.add_handler(CallbackQueryHandler(
+        application.add_handler(CallbackQueryHandler(
         what_app_handle, pattern="^what_app"))
 
-    # Run the bot until the user presses Ctrl-C
-    application.run_polling()
-
+        # Run the bot until the user presses Ctrl-C
+        application.run_polling()
+    
+    except error.InvalidToken:
+        print('You must pass the token you received from https://t.me/Botfather!')
+    except Exception as e:
+        print("error:", e)
+        
 
 if __name__ == "__main__":
     main()
