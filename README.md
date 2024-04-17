@@ -11,14 +11,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/TeleDark/v2ray-tel-bot/main/in
 2. open the config.yml file and put your Telegram bot token and information related to your panels in it. open with `nano config/config.yml`.
 3. If you want to customize the Telegram bot messages, edit the `messages.yml` file using the `nano config/messages.yml` command
 4. restart your server using the `reboot` command.
-
 <hr>
 
-## Install with Docker
-<details>
-  <summary>Click for Docker details</summary>
 
-#### Usage
+## Install with Docker
 
 1. Install Docker:
 
@@ -32,13 +28,16 @@ bash <(curl -Ls https://raw.githubusercontent.com/TeleDark/v2ray-tel-bot/main/in
    git clone https://github.com/TeleDark/v2ray-tel-bot.git
    cd v2ray-tel-bot
    ```
+3. open the config.yml file and put your Telegram bot token and information related to your panels in it
 
-3. Start the Service
+   ```sh
+   nano config/config.yml
+   ```
+5. Start the Service
 
    ```sh
    docker compose up -d
    ```
-</details>
 
 <hr>
 <div align="center">
