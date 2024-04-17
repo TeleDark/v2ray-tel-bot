@@ -16,4 +16,5 @@ with open(msg_yaml_file, 'r') as f:
     msg_yaml = yaml.safe_load(f)
 
 telegram_token = config_yaml["telegram_token"]
+channel_id = config_yaml["channel_id"]
 panels = config_yaml["panels"]

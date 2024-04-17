@@ -26,7 +26,6 @@ from telegram.constants import ParseMode
 ACCOUNT_LINK_INPUT = 1
 AFTER_QR_SENT = 2
 
-
 WHAT_APP = {
     "Nekoray": {
         "name": "Nekoray",
@@ -54,10 +53,24 @@ WHAT_APP = {
 
 }
 
+async def check_membership(context: ContextTypes.DEFAULT_TYPE, channel_id: str, user_id: int) -> bool:
+    try:
+        member_status = await context.bot.get_chat_member(chat_id=channel_id, user_id=user_id)
+        return member_status.status == 'member'
+    except error.TelegramError:
+        return False
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_name = update.message.from_user.first_name
+    user_id = update.message.from_user.id
+
     await update.message.reply_text(f"سلام {user_name} عزیز خوش اومدی\n" + msg_yaml['start_msg'])
+
+    if channel_id:
+        is_member = await check_membership(context, channel_id, user_id)
+        if not is_member:
+            await update.message.reply_text(msg_yaml['channel_msg'])
 
 
 async def generate_qrcode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -93,6 +106,15 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if update.edited_message is not None:
         return
     
+    user_id = update.message.from_user.id
+
+    if channel_id:
+        is_member = await check_membership(context, channel_id, user_id)
+        
+        if not is_member:
+            await update.message.reply_text(msg_yaml['channel_msg'])
+            return
+
     if update.message.photo:
         # If the message contains a photo, decode the QR code
         photo_id = update.message.photo[-1].file_id
@@ -153,6 +175,14 @@ async def show_what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYP
     
 
 async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if channel_id:
+        
+        user_id = update.message.from_user.id
+        is_member = await check_membership(context, channel_id, user_id)
+        
+        if not is_member:
+            await update.message.reply_text(msg_yaml['channel_msg'])
+            return 
     
     query = update.callback_query
     await query.answer()
@@ -164,6 +194,15 @@ async def what_app_handle(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await query.delete_message()
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if channel_id:
+        
+        user_id = update.message.from_user.id
+        is_member = await check_membership(context, channel_id, user_id)
+        
+        if not is_member:
+            await update.message.reply_text(msg_yaml['channel_msg'])
+            return 
+    
     await update.message.reply_text(msg_yaml['help_msg'])
 
 
