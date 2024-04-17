@@ -14,6 +14,33 @@ bash <(curl -Ls https://raw.githubusercontent.com/TeleDark/v2ray-tel-bot/main/in
 
 <hr>
 
+## Install with Docker
+<details>
+  <summary>Click for Docker details</summary>
+
+#### Usage
+
+1. Install Docker:
+
+   ```sh
+   bash <(curl -sSL https://get.docker.com)
+   ```
+
+2. Clone the Project Repository:
+
+   ```sh
+   git clone https://github.com/TeleDark/v2ray-tel-bot.git
+   cd v2ray-tel-bot
+   ```
+
+3. Start the Service
+
+   ```sh
+   docker compose up -d
+   ```
+</details>
+
+<hr>
 <div align="center">
 
 ### ▶️ Watch how to setup on YouTube.
