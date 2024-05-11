@@ -41,7 +41,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/TeleDark/v2ray-tel-bot/main/in
 
 
 ## Features
-- **Account Information Retrieval**: Retrieve account information using QRCode, UUID, Vless, Vmess, Shadowsocks, and remark.
+- **Account Information Retrieval**: Retrieve account information using Subscription Link, QRCode, UUID, Vless, Vmess, Shadowsocks, and remark.
 - **Dockerized**: The project is Dockerized for easy deployment and scalability.
 - **Channel Membership Requirement**: Optionally, you can enforce users to join a specific channel before accessing the account information. You can configure the channel_id in the `config.yml` file.
 
