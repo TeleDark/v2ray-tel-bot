@@ -1,4 +1,7 @@
 import qrcode
+import requests
+import base64
+import re
 from io import BytesIO
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -52,6 +55,16 @@ WHAT_APP = {
     },
 
 }
+def is_base64(s):
+    try:
+        return base64.b64encode(base64.b64decode(s)) == s
+    except Exception:
+        return False
+
+def is_url(text):
+    url_pattern = re.compile(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+')
+    return url_pattern.match(text) is not None
+
 
 async def check_membership(context: ContextTypes.DEFAULT_TYPE, channel_id: str, user_id: int) -> bool:
     try:
@@ -134,6 +147,27 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     else:
         # If the message doesn't contain a photo, use the text message
         client_msg = update.message.text
+
+        """
+        Fetch the first account detail from the given subscription URL.
+        If the URL content is base64 encoded, it decodes it.
+        Returns the first account or None if an error occurs.
+        """
+        if is_url(client_msg):
+            request_url = client_msg
+            try:
+                res = requests.get(request_url)
+                res_content = res.content
+                if is_base64(res_content):
+                    accounts = base64.b64decode(res_content).decode('utf-8')
+                else: 
+                    accounts = res_content.decode('utf-8')
+
+                client_msg = accounts.split()[0]
+
+            except requests.exceptions.RequestException as e:
+                await update.message.reply_text("در خواندن لینک ساب شما مشکلی پیش آمد")
+
         acc_info = account_info(client_msg)
 
     if acc_info == 'not found':
