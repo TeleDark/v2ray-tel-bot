@@ -71,7 +71,7 @@ install_base() {
             echo -e "${red}The script does not support CentOS-based operating systems ${plain}\n"
             ;;
         *)
-            apt-get update && apt-get install -y git wget python3 cron libzbar0
+            apt-get update && apt-get install -y git wget python3 cron libzbar0 zbar-tools
             ;;
     esac
 }
