@@ -1,5 +1,5 @@
 telegram_token: ""
-channel_id: "" #If you want to force the user to join the channel, please provide your channel's numeric ID (-1243423432). Otherwise, put None
+channel_id: "" #If you want to force the user to join the channel, please provide your channel's numeric ID (-1243423432). Otherwise, put Empty
 
 panels:
   - url: http://web.example.com:54321
