@@ -78,13 +78,13 @@ check_python() {
 
     # Clone or update repo
     if [ -d "$wk_dir/$config_dir" ]; then
-        cp -r "$wk_dir/$config_dir/$config_file" ~/
-        rm -rf "$wk_dir"
-        cd ~/ && git clone "$git_url" || { echo -e "${red}Failed to clone repository${plain}"; exit 1; }
-        cp -r "~/$config_file" "$wk_dir/$config_dir" && rm -rf "~/$config_file"
+        cp -r $wk_dir/$config_dir/$config_file ~/
+        rm -rf $wk_dir
+        cd ~/ && git clone $git_url &&
+        cp -r ~/$config_file $wk_dir/$config_dir && rm -rf ~/$config_file
     else
-        rm -rf "$wk_dir"
-        cd ~/ && git clone "$git_url" || { echo -e "${red}Failed to clone repository${plain}"; exit 1; }
+        rm -rf $wk_dir
+        cd ~/ && git clone $git_url;
     fi
 
     # Install dependencies using the updated pip
