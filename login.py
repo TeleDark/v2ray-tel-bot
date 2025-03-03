@@ -60,7 +60,7 @@ def get_data_from_panels():
             session.cookies.update(cookies[panel_name])
             try:
                 panel_data = session.post(panel['url'] + url_lists)
-                if panel_data.status_code != 404:
+                if panel_data.status_code != 404 and len(panel_data.content) > 0:
                     panels_data[panel_name] = panel_data.json()['obj']
                 else: 
                     panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
@@ -84,7 +84,7 @@ def get_data_from_panels():
             cookies[panel_name] = response.cookies.get_dict()
 
             panel_data = session.post(panel['url'] + url_lists)
-            if panel_data.status_code != 404:
+            if panel_data.status_code != 404 and len(panel_data.content) > 0:
                 panels_data[panel_name] = panel_data.json()['obj']
             else: 
                 panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
@@ -140,7 +140,7 @@ def save_accounts_to_json():
                         new_list.append(data_list[i]['clientStats'][j])
 
                 except Exception as e:
-                    print(e)
+                    continue
 
             data_list = new_list
 
@@ -162,7 +162,7 @@ def save_accounts_to_json():
                                 del data_list[i]['clientInfo'][j-k]
                                 k += 1
                     except Exception as e:
-                        print(e)
+                        print("hi2" +e)
 
                     inbound = data_list[i]['clientInfo']
                     setting = json.loads(data_list[i]['settings'])[
