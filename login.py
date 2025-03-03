@@ -72,7 +72,9 @@ def get_data_from_panels():
                 if response.status_code == 404:
                     print(f"{panel_name} : Are you sure your panel doesn't have a path address?")
                     continue
-
+                elif len(response.content) == 0:
+                    print(f"{panel_name} : Are you sure your panel doesn't have a path address?")
+                    continue
                 elif not response.json()['success']:
                     print(f"{panel_name} : wrong Username or Password")
                     continue
