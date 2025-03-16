@@ -66,24 +66,31 @@ def is_url(text):
     return url_pattern.match(text) is not None
 
 
-async def check_membership(context: ContextTypes.DEFAULT_TYPE, channel_id: str, user_id: int) -> bool:
+async def check_membership(context: ContextTypes.DEFAULT_TYPE, channel_id: str, user_id: int) -> tuple[bool, str]:
     try:
         member_status = await context.bot.get_chat_member(chat_id=channel_id, user_id=user_id)
-        return member_status.status == 'member'
-    except error.TelegramError:
-        return False
+        valid_statuses = {'member', 'administrator', 'creator'}
+        is_member = member_status.status in valid_statuses
+        return is_member, "OK" if is_member else ""
+    except error.Forbidden:
+        return False, "ربات ادمین کانال نیس⛔"
+    except error.BadRequest:
+        return False, "ربات دسترسی به کانال ندارد⛔"
+    except error.TelegramError as e:
+        return False, f"خطای ناشناخته: {str(e)}"
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_name = update.message.from_user.first_name
     user_id = update.message.from_user.id
 
-    await update.message.reply_text(f"سلام {user_name} عزیز خوش اومدی\n" + msg_yaml['start_msg'])
-
     if channel_id:
-        is_member = await check_membership(context, channel_id, user_id)
+        is_member, message = await check_membership(context, channel_id, user_id)
         if not is_member:
-            await update.message.reply_text(msg_yaml['channel_msg'])
+            await update.message.reply_text(msg_yaml['channel_msg'] + message)
+            return
+
+    await update.message.reply_text(f"سلام {user_name} عزیز خوش اومدی\n" + msg_yaml['start_msg'])
 
 
 async def generate_qrcode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -122,10 +129,9 @@ async def get_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     user_id = update.message.from_user.id
 
     if channel_id:
-        is_member = await check_membership(context, channel_id, user_id)
-        
+        is_member, message = await check_membership(context, channel_id, user_id)
         if not is_member:
-            await update.message.reply_text(msg_yaml['channel_msg'])
+            await update.message.reply_text(msg_yaml['channel_msg'] + message)
             return
 
     if update.message.photo:
