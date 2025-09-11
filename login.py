@@ -6,7 +6,7 @@ from keys import *
 
 url_login = "login"
 url_lists = "xui/inbound/list"
-url_sanaei = "panel/inbound/list"
+url_sanaei = "panel/api/inbounds/list"
 
 # write data in json file
 def write_json(json_data):
@@ -63,7 +63,7 @@ def get_data_from_panels():
                 if panel_data.status_code != 404 and len(panel_data.content) > 0:
                     panels_data[panel_name] = panel_data.json()['obj']
                 else: 
-                    panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
+                    panels_data[panel_name] = session.get(panel['url'] + url_sanaei).json()['obj']
             except requests.exceptions.JSONDecodeError:
                 get_data_from_panels()
         else:
@@ -89,7 +89,7 @@ def get_data_from_panels():
             if panel_data.status_code != 404 and len(panel_data.content) > 0:
                 panels_data[panel_name] = panel_data.json()['obj']
             else: 
-                panels_data[panel_name] = session.post(panel['url'] + url_sanaei).json()['obj']
+                panels_data[panel_name] = session.get(panel['url'] + url_sanaei).json()['obj']
     write_pickle(cookies)
     return panels_data
 
