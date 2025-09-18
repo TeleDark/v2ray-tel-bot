@@ -46,10 +46,10 @@ check_python() {
     # Clone or update repository first
     if [ -d "$wk_dir/$config_dir" ]; then
         echo -e "${green}Backing up existing config...${plain}"
-        cp -r $wk_dir/$config_dir/$config_file ~/
+        cp -r $wk_dir/$config_dir ~/
         rm -rf $wk_dir
         cd ~/ && git clone $git_url &&
-        cp -r ~/$config_file $wk_dir/$config_dir && rm -rf ~/$config_file
+        cp -r ~/$config_dir $wk_dir/ && rm -rf ~/$config_dir
     else
         echo -e "${green}Cloning repository...${plain}"
         rm -rf $wk_dir
